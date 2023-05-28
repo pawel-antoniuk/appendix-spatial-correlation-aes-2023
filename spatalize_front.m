@@ -1,6 +1,5 @@
-% Paweł Antoniuk 2021
+% Paweł Antoniuk 2023
 % Bialystok University of Technology
-% with the help of S. Zieliński
 
 %% Initialize
 clearvars; close all; clc;
