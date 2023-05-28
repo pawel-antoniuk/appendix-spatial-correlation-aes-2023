@@ -1,4 +1,4 @@
-% Paweł Antoniuk 2021
+% Paweł Antoniuk 2023
 % Bialystok University of Technology
 
 %% Initialize
@@ -15,7 +15,7 @@ params.RecordingsBaseDir = 'recordings';
 params.FinalResultsOutputDir = 'spatresults';
 params.SpatOutputDir = params.FinalResultsOutputDir;
 params.RecordingsExpectedFs = 48000;
-params.RecordingSpatRange = [0 2];
+params.RecordingSpatRange = [0 10];
 params.RecordingFadeTime = [0.01 0.01];
 params.RecordingLevelScale = 0.9;
 params.NChannels = 2;
@@ -26,11 +26,11 @@ params.TargetTrackLoudness = -23; % db
 params.MaxWidth = 0;
 params.NRepetitions = 1;
 params.AzimuthLocations = {
-    [30 60]
-    [30 60]
+    [10 70]
+    [10 70]
 };
 params.InverseAzimuthHRTFGroups = ["cipic"];
-params.PostProcWin = hamming(1024);
+params.PostProcWin = hamming(1024 * 20);
 
 %% Spatialize
 geninputs(params)
@@ -45,16 +45,16 @@ poscParams.FadeDuration = 2*10^-3;
 poscParams.RMSThreshold = 0.1;
 poscParams.AddNoiseRatio = 0.005;
 poscParams.EnsembleWidthLimitThreshold = 0.7;
-poscParams.POSCDistanceCorrection = 2;
+poscParams.POSCDistanceCorrection = 5;
 
 HRTFs = loadHRTFs(poscParams);
 [recordings, trackNames, realLocations] = loadRecordings(params);
 
-targetPositions = linspace(-90, 90, 91);
+targetPositions = linspace(-90, 90, 37*2);
 targetPositions = [targetPositions' zeros(size(targetPositions, 2), 1)];
 winWidth = size(params.PostProcWin, 1);
 winOverlap = winWidth / 2;
-winN = floor(size(recordings, 2) / winOverlap);
+winN = 1;
 HRTFsN = length(HRTFs);
 recordingsN = size(recordings, 1);
 targetPositionsN = size(targetPositions, 1);
@@ -64,7 +64,6 @@ framesMask = false(HRTFsN, recordingsN, winN);
 for iHRTF = 1:HRTFsN
     HRTF = HRTFs(iHRTF);
     HRTFSig = HRTF.SOFA.Data.IR ;
-%     HRTFSig = HRTFSig - mean(HRTFSig);
     HRTFPos = HRTF.Position;
 
     for iRecording = 1:recordingsN
@@ -78,9 +77,7 @@ for iHRTF = 1:HRTFsN
             recSig(size(recSig, 1):winStop, :) = 0;
             recSig = recSig(winStart:winStop, :) .* params.PostProcWin;
             recSigRMS = sqrt(mean(recSig .^ 2, 'all'));
-%             recSig = recSig - mean(recSig);
-%             recSig = rand(1024, 2);
-    
+
             if recSigRMS > poscParams.RMSThreshold * wholeSigRMSE
                 framesMask(iHRTF, iRecording, iWindow) = true;
                 for iPosition = 1:targetPositionsN
@@ -170,91 +167,35 @@ for iRecording = 1:2
     recording = squeeze(recordings(iRecording, :, :));
     C = squeeze(sum(Cmat, 1));
     C = squeeze(C(iRecording, :, :));
-
-    x = linspace(0, size(recordings, 2) / params.RecordingsExpectedFs, 18);
-    y = targetPositions(:, 1);
+    x = targetPositions(:, 1);
 
     nexttile
-    imagesc(x, y, C')
-    set(gca,'YDir','normal') 
-    ytickformat('%g°')
+    plot(x, C')
     grid on
+    xlabel("Azimuth \theta")
+    xtickformat('%g°')
     if iRecording == 1
-        ylabel("Azimuth Location φ")
+        ylabel('Spatial Correlation $C_\rho(\theta)$','Interpreter','latex')
+    else
+        ylabel('Spatial Correlation $\widetilde{C_\rho(\theta)}$','Interpreter','latex')
     end
-    hcb = colorbar;
-    if iRecording == 2
-        ylabel(hcb, "Spatial Correlation C(φ)");
-    end
-    
+    % ylim([-0.4, 0.9])
+    xlim([0, 90])
+    set(gca, 'XTick', -90:10:90)
+    set(gca, 'YTick', -1:0.2:1)
     ax = gca;
     ax.TickDir = 'both';
 
-    set(gca,'YTick',-90:30:90)
+    hold on
+    plot([10 10], [-0.5 1], 'k--', LineWidth=1)
+    plot([70 70], [-0.5 1], 'k--', LineWidth=1)
+    text(11, 0.9, "white noise", HorizontalAlignment="left")
+    text(69, 0.7, "white noise", HorizontalAlignment="right")
+    hold off
 
-%     if ~isempty(trackNames)
-%         realLocation = realLocations(iRecording);
-%         tracks = string(trackNames{iRecording});
-%         locs = [realLocation{:}];
-%         [axisLocs, axisLocsI] = sort((locs + 90) / 180);
-%         yyaxis right
-%         yticks(axisLocs)
-%         yticklabels(tracks)
-%         fontsize(gca().YAxis(2), 12, 'pixels')
-%     end
-
-    xlabel("t [s]")
-
-    % ensemble width
-%     nexttile
-%     mask = squeeze(framesMask(1, iRecording, :));
-%     limits = squeeze(ensembleWidthLimits(1, iRecording, :, :));
-%     limits(~mask, :) = nan;
-%     ensembleWidthStart = limits(:, 1);
-%     ensembleWidthEnd = limits(:, 2);
-%     x = linspace(params.RecordingSpatRange(1), ...
-%         params.RecordingSpatRange(2), ...
-%         size(ensembleWidthStart, 1));
-%     plot(x, ensembleWidthStart, ...
-%         'Color', [1, 0, 0, 0.8])
-%     hold on; 
-%     plot(x, ensembleWidthEnd, ...
-%         'Color', [0, 0, 1, 0.8]); 
-%     plot(minmax(x), ...
-%         squeeze(ensembleWidths(1, iRecording, [1 1])), '-.', ...
-%         'Color', [0, 0, 0, 0.8], ...
-%         'LineWidth', 1.5)
-%     plot(minmax(x), ...
-%         squeeze(ensembleWidths(1, iRecording, [2 2])), '-.', ...
-%         'Color', [0, 0, 0, 0.8], ...
-%         'LineWidth', 1.5)
-%     hold off;
-%     ylim([-90 90])
-%     ylabel('Ensemble Width')
-%     ytickformat('%g°')
-%     grid on
-%     if ~isempty(trackNames)
-%         text(10.1, 0, [sprintf("pred EW %.1f", ensembleWidths(1, iRecording, 3)), ...
-%             sprintf("real EW %.1f", realEensembleWidths{iRecording})])
-%     else
-%         text(10.1, 0, [sprintf("pred EW %.1f", ensembleWidths(1, iRecording, 3)), ...
-%             sprintf("real EW %.1f", realLocations(iRecording))])
-%     end
-% 
-%     if iRecording >= 6
-%         xlabel("t [s]")
-%     end
-
-%     if iRecording == 1
-%        legend('Left-side limit', ...
-%             'Right-side limit', ...
-%             'Median of limit', ...
-%             'Location', 'southwest')
-%     end
-    
 end
 
-exportgraphics(fig, "results/p4_comp.png", Resolution=300);
+exportgraphics(fig, "results/x1_whitenoise.png", Resolution=300);
 
 
 %% Routines
@@ -299,5 +240,3 @@ function [recordings, trackNames, realLocations] = loadRecordings(params)
         realLocations = str2double(erase(filenameParts(1, :, 4), "width"));
     end
 end
-
-

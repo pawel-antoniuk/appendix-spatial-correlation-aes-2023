@@ -1,10 +1,4 @@
 function env = envGen(fadeinTime,dur,fadeoutTime,fs,nCh,envType)
-    % Envelope generator
-    % dur - duration of the whole envelope (including fades)
-    % nCh - number of channels
-    % envType = "linear" (linear)
-    %           "sinsq" (sine squared)
-
     nfadein = fadeinTime*fs;
     nfadeout = fadeoutTime*fs;
     nsteady = round((dur-(fadeinTime+fadeoutTime))*fs);

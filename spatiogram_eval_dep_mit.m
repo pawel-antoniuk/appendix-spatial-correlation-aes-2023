@@ -122,7 +122,7 @@ end
 
 save(sprintf("workspace-dep-%s", datetime), '-v7.3')
 
-%% Generate POSCs routine
+
 function [POSCs, targetPositions] = generatePOSCs(params, poscParams, ...
     recordings, HRTFs)
 
@@ -170,7 +170,7 @@ for iHRTF = 1:HRTFsN
 end
 end
 
-%% Predict recordings routine
+
 function ensembleWidths = predictEnsembleWidths(...
     thresholdRatio, correctionRatio, POSCs, targetPositions)
 %% Correct POSCs

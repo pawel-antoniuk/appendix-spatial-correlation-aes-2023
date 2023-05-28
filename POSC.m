@@ -1,3 +1,6 @@
+% Paweł Antoniuk 2023
+% Bialystok University of Technology
+
 function corr = POSC(recSig, hrtfSig)
 [recR] = gccphat(recSig(:, 1), recSig(:, 2));
 [hrtfR] = gccphat(hrtfSig(:, 1), hrtfSig(:, 2));

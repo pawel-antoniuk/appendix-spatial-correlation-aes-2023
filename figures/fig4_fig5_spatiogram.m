@@ -1,4 +1,4 @@
-% Paweł Antoniuk 2021
+% Paweł Antoniuk 2023
 % Bialystok University of Technology
 
 %% Initialize
@@ -26,7 +26,7 @@ params.TargetTrackLoudness = -23; % db
 params.MaxWidth = 0;
 params.NRepetitions = 1;
 params.AzimuthLocations = {
-    [20 40]
+    [40 60]
     [10 20 30 40 50 60]
 };
 params.InverseAzimuthHRTFGroups = ["cipic"];
@@ -163,10 +163,10 @@ realEensembleWidths = cellfun(@(c) c(2) - c(1), realEensembleWidthLimits, ...
 %% Plot
 close all;
 fig = figure();
-fig.Position(3:4) = [400, 200];
+fig.Position(3:4) = [600, 250];
 tiledlayout(1, 1,"TileSpacing","tight")
 
-for iRecording = 1:1
+for iRecording = 2:2
     recording = squeeze(recordings(iRecording, :, :));
     C = squeeze(sum(Cmat, 1));
     C = squeeze(C(iRecording, :, :));
@@ -250,7 +250,7 @@ for iRecording = 1:1
     
 end
 
-exportgraphics(fig, "results/p4b_comp.png", Resolution=300);
+exportgraphics(fig, "results/p4c_comp.png", Resolution=300);
 
 
 %% Routines

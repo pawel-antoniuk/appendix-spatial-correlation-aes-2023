@@ -1,3 +1,6 @@
+% Paweł Antoniuk 2023
+% Bialystok University of Technology
+
 function metaResults = getSceneMetaresult(HRTF, audioName, trackNames, ...
     elevation, azimuthLocation, params)
 

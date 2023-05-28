@@ -1,4 +1,4 @@
-% Paweł Antoniuk 2021
+% Paweł Antoniuk 2023
 % Bialystok University of Technology
 
 %% Initialize
@@ -79,11 +79,6 @@ for iTestHRTF = 1:20
                 results{iCorrection, iThreshold}.Correction = correction;
                 results{iCorrection, iThreshold}.Threshold = threshold;
                 results{iCorrection, iThreshold}.Score = mae;
-
-                % fprintf("Pred %d / %d (%.2f s)\n", ...
-                %     (iCorrection - 1) * length(spaceThreshold) + iThreshold, ...
-                %     length(spaceCorrection) * length(spaceThreshold), ...
-                %     toc)
             end
         end
 
@@ -130,7 +125,7 @@ end
 
 save(sprintf("workspace-indep2-%s", datetime), '-v7.3')
 
-%% Generate POSCs routine
+
 function [POSCs, targetPositions] = generatePOSCs(params, poscParams, ...
     recordings, HRTFs)
 
@@ -178,7 +173,7 @@ for iHRTF = 1:HRTFsN
 end
 end
 
-%% Predict recordings routine
+
 function ensembleWidths = predictEnsembleWidths(...
     thresholdRatio, correctionRatio, POSCs, targetPositions)
 %% Correct POSCs

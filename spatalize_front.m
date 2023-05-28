@@ -61,16 +61,10 @@ for iRep = 1:params.NRepetitions
 end
 toc(start)
 
-%% Plot scenes summary
-% spatMetaresults = cell2mat(reshape(allSpatMetaresults, 1, 1, 1, []));
-% plotAudioScene(HRTFs, spatMetaresults, params);
-
 %% Save workspace
 save(fullfile(params.FinalResultsOutputDir, 'workspace'), '-v7.3');
 saveHRTFMetadata(HRTFs, params);
 
-%% --- ROUTINES ---
-% Load HRTFs routine
 function HRTFs = loadHRTFs(params)
     HRTFFilenames = dir(fullfile(params.HRTFBaseDir, '*', '*.sofa'));
     
@@ -139,8 +133,6 @@ function HRTFs = loadHRTFs(params)
     end
 end
 
-
-% Try load resampled HRTF routine
 function [loadStatus, HRTF] = tryLoadResampledHRTF(id, HRTF, params)
     resampledSOFAdir = fullfile(params.HRTFBaseDir, ...
         ['_resampled_' num2str(params.RecordingsExpectedFs)], ...
@@ -157,8 +149,6 @@ function [loadStatus, HRTF] = tryLoadResampledHRTF(id, HRTF, params)
     end
 end
 
-
-% Load HRTF routine
 function HRTF = loadHRTF(id, filename, params)
     listing = dir(filename);
     fullFilename = fullfile(listing.folder, listing.name);
@@ -186,7 +176,6 @@ function HRTF = loadHRTF(id, filename, params)
 end
 
 
-% Resample and save routine
 function HRTF = resampleAndSave(HRTF, params)    
     fprintf('[%s][%s] Resampling from %d Hz to %d Hz\n', ...
         HRTF.HRTFGroup, HRTF.Name, ...
@@ -210,7 +199,6 @@ function HRTF = resampleAndSave(HRTF, params)
 end
 
 
-% Resample SOFA routine
 function Obj = SOFAresample(Obj, targetFs)    
     currentFs = Obj.Data.SamplingRate;
     
@@ -239,7 +227,6 @@ function Obj = SOFAresample(Obj, targetFs)
 end
 
 
-% load tracks routine
 function [tracks,trackNames] = loadAudioTracks(audioFilename, params)
     songName = fullfile(audioFilename.folder, audioFilename.name);
     trackFilenames = dir(fullfile(songName, '*.wav'));
@@ -274,8 +261,7 @@ function tracks = normalizeAudioTracks(tracks, params)
     end
 end
 
-% Spatialize all audio trakcs routine
-% spatResults shape (HRTF, dir, sample, ch)
+
 function [outSpatResults,outSpatMetaResults] = spatializeSong(HRTFs, tracks, trackNames, audioName, params)    
     sz = [length(params.Elevations), ...
         length(HRTFs)];
@@ -335,7 +321,6 @@ function metaResults = getSceneMetaresult(HRTF, audioName, trackNames, elevation
 end
 
 
-% Spatialize audio routine
 function spatResults = spatializeAudioTracks(...
     tracks, HRTF, metaResults, params)   
 
@@ -366,8 +351,6 @@ function spatResults = spatializeAudioTracks(...
     end
 end
 
-
-% Trim and fade signal routine
 function y = trimAndFadeSignal(x, params)    
     range = params.RecordingSpatRange * params.RecordingsExpectedFs - [0 1];
     y = x(range(1):sum(range), :);
@@ -379,8 +362,6 @@ function y = trimAndFadeSignal(x, params)
     y = y .* env;
 end
 
-
-% Postprocess spatialization results routine
 function spatResults = posprocessSpatResults(spatResults, params)    
     % Peak normalization and scaling
     peakLevel = max(abs(spatResults), [], [3 4 5]);
@@ -391,8 +372,6 @@ function spatResults = posprocessSpatResults(spatResults, params)
 end
 
 
-% Save spatialization results routine
-% spatResults shape (HRTF, dir, sample, ch)
 function spatResults = saveSpatResults(spatResults, spatMetaresults, ...
     HRTFs, audioFilename, iRep, params)
     
@@ -429,7 +408,7 @@ function spatResults = saveSpatResults(spatResults, spatMetaresults, ...
     end
 end
 
-% Get output filename routine
+
 function [filename,parentDir] = getOutputFilename( ...
     audioFilename, HRTF, ensembleActualWidth, elevation, azimuthOffset, ...
     iRep) 
@@ -443,11 +422,6 @@ function [filename,parentDir] = getOutputFilename( ...
         azimuthOffset, ...
         iRep);
 end
-
-
-% Drawning routine
-% spatMetaresults shape (width, HRTF, dir, audio)
-
 
 function saveHRTFMetadata(HRTFs, params)
     T = struct2table(HRTFs);
