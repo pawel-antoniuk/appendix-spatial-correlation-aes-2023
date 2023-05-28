@@ -5,7 +5,6 @@ This repository consists of scripts and data useful to replicate the experiments
 The repository is organized as follows:
 - [models](models) - the deep learning models that were trained in the study
 - [scripts](scripts) - scripts used in the development of the deep learning algorithm: finding hyperparameters, model traning, evaluation, visualization, and statistical calculations
-- [data](data) - partial results and detailed description of the data used in the study 
 
 ## Dependencies
 Software dependencies:
