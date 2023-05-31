@@ -7,7 +7,8 @@ authors:
 - family-names: "Zieliński"
   given-names: "Sławomir K."
   orcid: "https://orcid.org/0000-0002-3205-974X"
-title: "Audio Engineering Conference on Spatial & Immersive Audio, 2023 August 23-25, Huddersfield, UK"
+title: "Blind estimation of ensemble width in binaural music recordings using ‘spatiograms’ under simulated anechoic conditions"
+journal: "Audio Engineering Conference on Spatial & Immersive Audio, 2023 August 23-25, Huddersfield, UK"
 version: 1.0.0
 date-released: 2023-08-23
 url: "https://github.com/pawel-antoniuk/appendix-spatial-correlation-aes-2023"
