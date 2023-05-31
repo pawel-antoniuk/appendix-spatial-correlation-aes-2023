@@ -1,5 +1,5 @@
 # Software Repository - Blind estimation of ensemble width in binaural music recordings using ‘spatiograms’ under simulated anechoic conditions 
-This repository consists of scripts and data useful to replicate the experiments described in the paper "Blind estimation of ensemble width in binaural music recordings using ‘spatiograms’ under simulated anechoic conditions".
+This repository consists of the scripts and data intended to replicate the experiments described in the paper "Blind estimation of ensemble width in binaural music recordings using ‘spatiograms’ under simulated anechoic conditions" – accepted for the publication at the AES International Conference on Spatial & Immersive Audio, 2023 August 23-25, Huddersfield, UK.
 
 ## Structure
 The repository is organized as follows:
